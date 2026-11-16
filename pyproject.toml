@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aevum-copayguard"
+version = "0.1.0"
+description = "Aevum CopayGuard & Invoice Escrow Protocol — 6-decimal tUSD8 Confirmation-of-Payee, Invoice, Milestone Escrow, Payroll Streaming & AI Stablecoin Copilot on QDay Aevum Testnet (Chain ID 44005)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "httpx>=0.27.0",
+    "pydantic>=2.7.0",
+]
+
+[project.scripts]
+aevum-copilot = "aevum_copilot.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["aevum_copilot*"]
+
+[tool.setuptools.package-data]
+aevum_copilot = ["static/*.html"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests_py"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["lib", "out", "cache", "broadcast"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "C90"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10

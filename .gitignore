@@ -1,0 +1,21 @@
+# OPSEC & private submission materials
+SUBMISSION_PACKAGE.md
+.env
+.env.*
+!.env.example
+
+# Foundry artifacts
+out/
+cache/
+broadcast/
+
+# Python caches & build artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+.venv/
+venv/

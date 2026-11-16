@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aevum CopayGuard &amp; tUSD8 Invoice Escrow</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #131b33;
+      --border: #26345e;
+      --text: #eef2ff;
+      --muted: #9aa8d1;
+      --accent: #38bdf8;
+      --ok: #22c55e;
+      --danger: #ef4444;
+      --warn: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at top right, #172554, var(--bg) 55%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .wrap { max-width: 1140px; margin: 0 auto; padding: 28px 20px 60px; }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: var(--accent);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 20px;
+      margin-top: 22px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+    }
+    h1 { font-size: 24px; margin: 0; }
+    h2 { font-size: 17px; margin: 0 0 12px; color: var(--accent); }
+    p { margin: 6px 0; color: var(--muted); font-size: 14px; }
+    textarea, input {
+      width: 100%;
+      background: #090e1c;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+    .presets { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; }
+    button {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: #1d294d;
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 13px;
+      transition: background 0.15s ease;
+    }
+    button:hover { background: #293a6b; }
+    button.primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      border-color: #38bdf8;
+    }
+    pre {
+      background: #070b16;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      overflow-x: auto;
+      font-size: 12.5px;
+      color: #cbd5e1;
+      max-height: 360px;
+    }
+    .pill-safe { color: var(--ok); font-weight: 700; }
+    .pill-blocked { color: var(--danger); font-weight: 700; }
+    .kv { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px dashed rgba(255,255,255,0.08); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Aevum CopayGuard &amp; tUSD8 Settlement Suite</h1>
+        <p>Confirmation-of-Payee Invoices, Milestone Escrows, Linear Payroll Streams &amp; Native AI Copilot</p>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <span class="badge" id="netBadge">Chain 44005 (QDay Aevum Testnet) &bull; tUSD8: 0x456569838f1d43009A91ebA4263147Afd7233483 (6 Decimals)</span>
+        <button class="primary" onclick="connectAevumWallet()">Connect / Switch to Aevum (0xABE5)</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <h2>1. Live Aevum Testnet &amp; tUSD8 Telemetry</h2>
+        <div id="netStats">Loading live RPC state from https://rpc-test.qday.info ...</div>
+        <div style="margin-top:14px;">
+          <label style="font-size:13px; color:var(--muted);">Inspect Aevum Wallet Balance (tQDAY + 6-dec tUSD8):</label>
+          <div style="display:flex; gap:8px; margin-top:4px;">
+            <input id="acctInput" class="mono" placeholder="0x4551B2a3dE4F43e6613E23edf798Ab4FB0211564" value="0x4551B2a3dE4F43e6613E23edf798Ab4FB0211564" />
+            <button onclick="checkAccount()">Query</button>
+          </div>
+          <div id="acctOut" class="mono" style="margin-top:8px; color:var(--accent);"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>2. AI Stablecoin Payment Copilot &amp; Poisoning Radar</h2>
+        <div class="presets">
+          <button onclick="loadPreset(0)">Invoice (2% Early Discount)</button>
+          <button onclick="loadPreset(1)">Milestone Escrow (2 Tranches)</button>
+          <button onclick="loadPreset(2)">Payroll Stream (30d + Cliff)</button>
+          <button style="border-color:var(--danger); color:#fca5a5;" onclick="loadPreset(3)">Simulate Poisoning Attack</button>
+        </div>
+        <textarea id="promptBox" rows="4"></textarea>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+          <label style="font-size:13px; color:var(--muted);">
+            <input type="checkbox" id="ollamaToggle" style="width:auto; margin-right:6px;" />
+            Use Local Ollama (qwen2.5:7b-instruct)
+          </label>
+          <button class="primary" onclick="compilePlan()">Compile 6-Decimal tUSD8 Calldata</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h2>3. Confirmation-of-Payee Verdict &amp; Deterministic EVM Calldata Bundle</h2>
+      <div id="verdictBanner" style="margin-bottom:10px; font-size:14px;">Select a preset and click Compile to generate verified calldata.</div>
+      <pre id="planOutput">{}</pre>
+    </div>
+  </div>
+
+  <script>
+    const PRESETS = [
+      "Pay invoice INV-2026-884 for 1,250.50 tUSD8 to acme.cloud.billing (Acme Cloud Infrastructure Ltd) at 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 with 2% early discount, due in 14 days.",
+      "Create milestone escrow MSA-2026-310 for 4,000 tUSD8 to qday.logistics.apac (QDay APAC Logistics Pte Ltd) at 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC with tranches: 1500, 2500 over 21 days.",
+      "Open payroll stream PAY-2026-09 for 6,000.00 tUSD8 to alice.eng.payroll (Alice Nguyen) at 0x90F79bf6EB2c4f870365E785982E1f101E93b906 over 30 days with 7-day cliff.",
+      "Pay invoice INV-2026-999 for 5,000 tUSD8 to acme.cloud.billing (Acme Cloud Infrastructure Ltd) at 0x7099790000000000000000000000000000dc79C8."
+    ];
+
+    function esc(raw) {
+      return String(raw ?? "").replace(/[&<>"']/g, (ch) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[ch]));
+    }
+
+    function loadPreset(idx) {
+      document.getElementById("promptBox").value = PRESETS[idx];
+      compilePlan();
+    }
+
+    async function refreshNetwork() {
+      const res = await fetch("/api/network");
+      const d = await res.json();
+      const box = document.getElementById("netStats");
+      box.innerHTML = `
+        <div class="kv"><span>RPC Reachable</span><span class="${d.reachable ? 'pill-safe' : 'pill-blocked'}">${esc(d.reachable)}</span></div>
+        <div class="kv"><span>Chain ID</span><span class="mono">${esc(d.chain_id)} (expected ${esc(d.expected_chain_id)})</span></div>
+        <div class="kv"><span>Latest Block</span><span class="mono">#${esc(Number(d.latest_block || 0).toLocaleString())}</span></div>
+        <div class="kv"><span>tUSD8 Contract</span><span class="mono">${esc(d.tusd8_address)}</span></div>
+        <div class="kv"><span>On-Chain Token / Decimals</span><span class="mono">${esc(d.tusd8_symbol)} / ${esc(d.tusd8_decimals)}</span></div>
+        <div class="kv"><span>Total Supply</span><span class="mono">${esc(d.tusd8_total_supply_formatted)} tUSD8</span></div>
+      `;
+    }
+
+    async function checkAccount() {
+      const addr = document.getElementById("acctInput").value.trim();
+      const out = document.getElementById("acctOut");
+      out.textContent = "Querying RPC...";
+      const res = await fetch("/api/account?address=" + encodeURIComponent(addr));
+      const d = await res.json();
+      out.textContent = d.error ? ("Error: " + d.error) : (`tQDAY: ${d.tqday_formatted} | tUSD8: ${d.tusd8_formatted}`);
+    }
+
+    async function compilePlan() {
+      const instruction = document.getElementById("promptBox").value;
+      const use_ollama = document.getElementById("ollamaToggle").checked;
+      const res = await fetch("/api/copilot/plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ instruction, use_ollama })
+      });
+      const data = await res.json();
+      const banner = document.getElementById("verdictBanner");
+      if (data.error) {
+        banner.innerHTML = `<span class="pill-blocked">Error: ${esc(data.error)}</span>`;
+      } else if (data.guard_report.blocked) {
+        banner.innerHTML = `<span class="pill-blocked">${esc(data.summary)}</span> &mdash; ${esc(data.guard_report.warnings.join(" "))}`;
+      } else {
+        banner.innerHTML = `<span class="pill-safe">${esc(data.summary)}</span> (${esc(data.transactions.length)} EVM calls prepared, ${esc(data.total_amount_units)} atomic units)`;
+      }
+      document.getElementById("planOutput").textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function connectAevumWallet() {
+      if (!window.ethereum) {
+        alert("No EIP-1193 browser wallet detected. Install MetaMask or Rabby to sign directly.");
+        return;
+      }
+      await window.ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [{
+          chainId: "0xabe5",
+          chainName: "QDay Aevum Testnet",
+          nativeCurrency: { name: "Test QDAY", symbol: "tQDAY", decimals: 18 },
+          rpcUrls: ["https://rpc-test.qday.info"],
+          blockExplorerUrls: ["https://explorer-test.qday.info"]
+        }]
+      });
+      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+      if (accounts && accounts[0]) {
+        document.getElementById("acctInput").value = accounts[0];
+        checkAccount();
+      }
+    }
+
+    document.getElementById("promptBox").value = PRESETS[0];
+    refreshNetwork();
+    checkAccount();
+    compilePlan();
+  </script>
+</body>
+</html>

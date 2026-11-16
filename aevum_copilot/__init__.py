@@ -1,0 +1,33 @@
+"""Aevum CopayGuard & Invoice Escrow Protocol — Python AI Copilot & Web Service."""
+
+from __future__ import annotations
+
+AEVUM_CHAIN_ID = 44005
+AEVUM_CHAIN_ID_HEX = "0xabe5"
+AEVUM_NETWORK_NAME = "QDay Aevum Testnet"
+AEVUM_RPC_URL = "https://rpc-test.qday.info"
+AEVUM_EXPLORER_URL = "https://explorer-test.qday.info"
+AEVUM_FAUCET_URL = "https://faucet.qday.info/en"
+
+AEVUM_TUSD8_ADDRESS = "0x456569838f1d43009A91ebA4263147Afd7233483"
+AEVUM_TQDAY_FAUCET = "0x33d19Bde2e1798c13808f17BfBa1780b28e4bACC"
+AEVUM_TUSD8_FAUCET = "0x4551B2a3dE4F43e6613E23edf798Ab4FB0211564"
+
+TUSD8_SYMBOL = "tUSD8"
+TUSD8_DECIMALS = 6
+TUSD8_UNIT = 10**TUSD8_DECIMALS
+
+__all__ = [
+    "AEVUM_CHAIN_ID",
+    "AEVUM_CHAIN_ID_HEX",
+    "AEVUM_EXPLORER_URL",
+    "AEVUM_FAUCET_URL",
+    "AEVUM_NETWORK_NAME",
+    "AEVUM_RPC_URL",
+    "AEVUM_TQDAY_FAUCET",
+    "AEVUM_TUSD8_ADDRESS",
+    "AEVUM_TUSD8_FAUCET",
+    "TUSD8_DECIMALS",
+    "TUSD8_SYMBOL",
+    "TUSD8_UNIT",
+]
