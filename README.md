@@ -12,7 +12,7 @@
 > **The Enterprise-Grade Stablecoin Settlement Engine on QDay Aevum.**  
 > Unifying on-chain **Confirmation-of-Payee (CoP)** anti-address-poisoning identity verification, atomic 6-decimal `tUSD8` invoice early-discount settlement, milestone-gated escrows, continuous linear payroll streaming, and a **$0 local AI Copilot & Poisoning Radar** running against QDay Aevum Testnet (Chain ID `44005`).
 >
-> **Live Walkthrough & Telemetry:** [https://khanhtnq.github.io/aevum-copayguard-protocol/](https://khanhtnq.github.io/aevum-copayguard-protocol/) | **Direct 1080p MP4:** [demo_1080p.mp4](https://khanhtnq.github.io/aevum-copayguard-protocol/demo_1080p.mp4)
+> **Live Walkthrough & Telemetry:** [https://khanhtnq.github.io/aevum-copayguard-protocol/](https://khanhtnq.github.io/aevum-copayguard-protocol/) | **YouTube Demo Video (1080p Narrated):** [https://youtu.be/sJsTupuMkzc](https://youtu.be/sJsTupuMkzc) | **Direct 1080p MP4:** [demo_1080p.mp4](https://khanhtnq.github.io/aevum-copayguard-protocol/demo_1080p.mp4)
 
 ---
 
