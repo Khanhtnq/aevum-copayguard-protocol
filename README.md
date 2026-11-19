@@ -4,11 +4,15 @@
 [![Chain ID](https://img.shields.io/badge/Chain_ID-44005_(0xabe5)-indigo.svg)](https://rpc-test.qday.info)
 [![tUSD8 Contract](https://img.shields.io/badge/tUSD8-0x456569838f1d43009A91ebA4263147Afd7233483-emerald.svg)](https://explorer-test.qday.info/token/0x456569838f1d43009A91ebA4263147Afd7233483)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Foundry](https://img.shields.io/badge/Foundry-Passing-brightgreen.svg)]()
+[![Foundry](https://img.shields.io/badge/Foundry-12%2F12_Passing-brightgreen.svg)]()
+[![Pytest](https://img.shields.io/badge/Pytest-16%2F16_Passing-brightgreen.svg)]()
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11+-blue.svg)]()
+[![Live Demo](https://img.shields.io/badge/Demo-GitHub_Pages-cyan.svg)](https://khanhtnq.github.io/aevum-copayguard-protocol/)
 
 > **The Enterprise-Grade Stablecoin Settlement Engine on QDay Aevum.**  
 > Unifying on-chain **Confirmation-of-Payee (CoP)** anti-address-poisoning identity verification, atomic 6-decimal `tUSD8` invoice early-discount settlement, milestone-gated escrows, continuous linear payroll streaming, and a **$0 local AI Copilot & Poisoning Radar** running against QDay Aevum Testnet (Chain ID `44005`).
+>
+> **Live Walkthrough & Telemetry:** [https://khanhtnq.github.io/aevum-copayguard-protocol/](https://khanhtnq.github.io/aevum-copayguard-protocol/) | **Direct 1080p MP4:** [demo_1080p.mp4](https://khanhtnq.github.io/aevum-copayguard-protocol/demo_1080p.mp4)
 
 ---
 
@@ -177,6 +181,49 @@ curl http://127.0.0.1:8088/api/health
 
 ---
 
-## 8. License
+## 8. REST API Reference & Examples
+
+The `aevum-copilot` server exposes a hardened JSON REST API (strict `65,536`-byte payload cap, UTF-8 & JSON schema validation):
+
+| Method & Endpoint | Description |
+|:---|:---|
+| `GET /api/health` | Service status, QDay Aevum network constants, and trusted payee directory |
+| `GET /api/network` | Live QDay Aevum Testnet RPC snapshot (`eth_chainId`, `eth_blockNumber`, `tUSD8` metadata) |
+| `GET /api/account?address=0x...` | Live `tQDAY` native gas balance and `tUSD8` 6-decimal balance for any EVM address |
+| `POST /api/guard` | Runs Lookalike Address Poisoning Radar & Confirmation-of-Payee hash verification |
+| `POST /api/copilot/plan` | Parses natural-language payment intent into verified ABI calldata + safety verdict |
+
+```bash
+# 1. Query live QDay Aevum Testnet snapshot
+curl -s http://127.0.0.1:8088/api/network
+
+# 2. Screen a candidate payee address for lookalike poisoning
+curl -s -X POST http://127.0.0.1:8088/api/guard \
+  -H "Content-Type: application/json" \
+  -d '{"wallet":"0x7099790000000000000000000000000000dc79c8","handle":"acme.cloud.billing","legal_name":"Acme Cloud Infrastructure Ltd"}'
+
+# 3. Compile verified invoice calldata from natural language
+curl -s -X POST http://127.0.0.1:8088/api/copilot/plan \
+  -H "Content-Type: application/json" \
+  -d '{"instruction":"Pay invoice INV-884 for 1250.50 tUSD8 to acme.cloud.billing with 2% early discount"}'
+```
+
+---
+
+## 9. Known Constraints & Future Roadmap
+
+### Known Constraints
+- **6-Decimal Token Invariant**: `AevumInvoiceVault` enforces `IERC20Metadata.decimals() == 6` at deployment and rejects 18-decimal or fee-on-transfer tokens by design to eliminate `1e12` scaling errors.
+- **Bounded Escrow Tranches & Discounts**: Milestone escrows support up to `10` sequential tranches per agreement, and early-payment discounts are capped at `5000` bps (`50.00%`) to prevent misconfigured principal drains.
+- **Testnet Faucet Gate**: Live contract broadcasts via `script/DeployAndProveAevum.s.sol` require `tQDAY` gas claimed from `https://faucet.qday.info/en` (Turnstile-gated). When `AEVUM_DEPLOYER_PRIVATE_KEY` is unset, `test/AevumLiveFork.t.sol` validates full end-to-end execution against a live fork of `https://rpc-test.qday.info`.
+
+### Future Roadmap
+1. **QDay Mainnet & Post-Quantum Readiness**: Deploy verified `AevumPayeeRegistry` and `AevumInvoiceVault` instances on QDay Mainnet with deterministic CREATE2 addresses.
+2. **ERC-8004 & Agentic Session Keys**: Integrate scoped session keys and per-epoch `tUSD8` spend caps for autonomous AI treasury agents.
+3. **Multi-Sig & Cross-Chain CoP Federation**: Add Gnosis Safe / multi-sig approval hooks for payee wallet rotations and shared enterprise Confirmation-of-Payee registries.
+
+---
+
+## 10. License
 
 This repository is licensed under the [MIT License](LICENSE).

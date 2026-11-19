@@ -163,12 +163,17 @@
 
   <header>
     <div class="badge-bar">
-      <span class="badge badge-green">✔ 12/12 Foundry Invariants Pass</span>
+      <span class="badge badge-green">✔ 12/12 Foundry + 16/16 Pytest Pass</span>
       <span class="badge badge-cyan">⚡ QDay Aevum Testnet (Chain ID 44005)</span>
       <span class="badge badge-purple">🛡 Address Poisoning Radar Verified</span>
     </div>
     <h1>Aevum CopayGuard & tUSD8 Settlement Suite</h1>
-    <p class="subtitle">Official 60-Second Video Walkthrough for Aevum Builder Challenge #1 ($1,500 USDT)</p>
+    <p class="subtitle">Official 60-Second Video Walkthrough &amp; Live RPC Audit for Aevum Builder Challenge #1 ($1,500 USDT)</p>
+    <div class="badge-bar" style="margin-top: 18px; margin-bottom: 0;">
+      <a class="badge badge-cyan" href="https://github.com/Khanhtnq/aevum-copayguard-protocol" target="_blank" rel="noopener">GitHub Repository ↗</a>
+      <a class="badge badge-green" href="demo_1080p.mp4" target="_blank" rel="noopener">Direct 1080p MP4 ↗</a>
+      <a class="badge badge-purple" href="https://explorer-test.qday.info/token/0x456569838f1d43009A91ebA4263147Afd7233483" target="_blank" rel="noopener">tUSD8 Explorer ↗</a>
+    </div>
   </header>
 
   <main>
@@ -252,8 +257,12 @@
           <td><span style="color: #38bdf8;">[Configured in Private Submission Escrow / Canonical Registry]</span></td>
         </tr>
         <tr>
+          <td>Live RPC Status</td>
+          <td><span id="live-rpc-status" style="color: #22d3ee;">Probing https://rpc-test.qday.info ...</span></td>
+        </tr>
+        <tr>
           <td>Video Specs</td>
-          <td>1920x1080 @ 30fps · H.264 (yuv420p) · Exact 60.00s · 1.63 MB</td>
+          <td>1920x1080 @ 30fps · H.264 (yuv420p) · Exact 60.00s · 1.71 MB (1,711,851 bytes)</td>
         </tr>
       </tbody>
     </table>
@@ -262,6 +271,37 @@
   <footer>
     <p>Aevum CopayGuard Protocol · Built for Aevum Builder Challenge #1 · 2026</p>
   </footer>
+
+  <script>
+    (async function probeAevumRpc() {
+      const el = document.getElementById('live-rpc-status');
+      const rpcUrl = 'https://rpc-test.qday.info';
+      const tusd8 = '0x456569838f1d43009A91ebA4263147Afd7233483';
+      async function rpc(method, params) {
+        const res = await fetch(rpcUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params })
+        });
+        const data = await res.json();
+        return data.result;
+      }
+      try {
+        const [chainId, blockHex, decHex] = await Promise.all([
+          rpc('eth_chainId', []),
+          rpc('eth_blockNumber', []),
+          rpc('eth_call', [{ to: tusd8, data: '0x313ce567' }, 'latest'])
+        ]);
+        const blockNum = parseInt(blockHex, 16);
+        const decimals = parseInt(decHex, 16);
+        el.style.color = '#34d399';
+        el.textContent = `ONLINE · chainId=${chainId} (${parseInt(chainId, 16)}) · block=#${blockNum.toLocaleString()} · tUSD8 decimals=${decimals}`;
+      } catch (err) {
+        el.style.color = '#94a3b8';
+        el.textContent = 'RPC browser probe blocked/offline (verify via curl or AevumLiveFork.t.sol)';
+      }
+    })();
+  </script>
 
 </body>
 </html>
