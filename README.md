@@ -16,6 +16,28 @@
 
 ---
 
+## `< 60s` Judge Verification & Benchmark Summary
+
+Evaluate **Aevum CopayGuard** locally or in-browser in under 60 seconds:
+
+1. **Zero-Install Interactive Walkthrough & Telemetry**: Open **[https://khanhtnq.github.io/aevum-copayguard-protocol/](https://khanhtnq.github.io/aevum-copayguard-protocol/)** for live QDay Aevum Testnet (`44005`) telemetry, Lookalike Poisoning Radar, and the 1080p narrated demo.
+2. **Local Smart Contract, Live Fork & Copilot Verification (`~8s`)**:
+```bash
+git clone https://github.com/Khanhtnq/aevum-copayguard-protocol.git && cd aevum-copayguard-protocol
+forge test -vv
+python -m pytest tests_py -v
+python -m ruff check aevum_copilot tests_py scripts
+```
+
+| Verification Suite | Target | Observed Result | Key Invariant Verified |
+|:---|:---|:---|:---|
+| **Foundry Unit & Fuzz** | `test/AevumProtocol.t.sol` | **`11 / 11 PASSED`** (`256` fuzz runs) | 6-dec `tUSD8` conservation, discount splits, anti-poisoning, reentrancy block |
+| **Foundry Live QDay Fork** | `test/AevumLiveFork.t.sol` | **`1 / 1 PASSED`** | Live fork against `https://rpc-test.qday.info` + real `tUSD8` |
+| **Python Copilot & Server** | `tests_py/` | **`16 / 16 PASSED`** | ABI cast parity, lookalike radar, 65 KB HTTP guard |
+| **Ruff Linter** | `aevum_copilot`, `tests_py`, `scripts` | **`0` errors** | PEP 8 & McCabe complexity checks clean |
+
+---
+
 ## 1. Problem: Why Enterprise Stablecoin Payments Fail Today
 
 Global enterprise treasuries moving billions in stablecoins face three acute operational and security bottlenecks:
